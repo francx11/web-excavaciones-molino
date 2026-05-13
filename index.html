@@ -304,13 +304,26 @@ ul { list-style: none; }
   position: fixed;
   inset: 0 0 auto;
   z-index: 900;
-  transition: background .35s, backdrop-filter .35s, box-shadow .35s;
+  transition: box-shadow .35s;
 }
-.site-header.scrolled {
+/* backdrop-filter en pseudo-elemento para no crear containing block en hijos fixed */
+.site-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
   background: rgba(17,17,17,.92);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
+  opacity: 0;
+  transition: opacity .35s;
+  z-index: -1;
+  pointer-events: none;
+}
+.site-header.scrolled {
   box-shadow: 0 1px 0 var(--border);
+}
+.site-header.scrolled::before {
+  opacity: 1;
 }
 
 .nav-container {
