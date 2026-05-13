@@ -573,31 +573,6 @@ ul { list-style: none; }
   gap: 1rem;
 }
 
-.hero-scroll {
-  position: absolute;
-  bottom: 2.5rem;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: .4rem;
-  color: var(--text-muted);
-  font-size: .7rem;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-}
-.hero-scroll-line {
-  width: 1px;
-  height: 40px;
-  background: linear-gradient(to bottom, var(--accent), transparent);
-  animation: scrollpulse 2s ease-in-out infinite;
-}
-@keyframes scrollpulse {
-  0%, 100% { opacity: .3; transform: scaleY(1); }
-  50% { opacity: 1; transform: scaleY(1.15); }
-}
 
 /* ============================================================
    SECTION SHARED
@@ -1166,10 +1141,6 @@ hr.divider {
       </div>
     </div>
 
-    <div class="hero-scroll" aria-hidden="true">
-      <div class="hero-scroll-line"></div>
-      <span>Scroll</span>
-    </div>
   </section>
 
   <hr class="divider">
