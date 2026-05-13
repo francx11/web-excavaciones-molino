@@ -377,6 +377,7 @@ ul { list-style: none; }
   width: 0; height: 2px;
   background: var(--accent);
   transition: width .25s;
+  will-change: width;
 }
 .nav-links a:hover,
 .nav-links a:focus-visible { color: var(--text); }
@@ -461,7 +462,7 @@ ul { list-style: none; }
 .btn-secondary {
   background: transparent;
   color: var(--text);
-  border-color: rgba(255,255,255,.25);
+  border-color: var(--text-muted);
 }
 .btn-secondary:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
 
@@ -563,7 +564,7 @@ ul { list-style: none; }
   letter-spacing: -.01em;
   color: var(--text);
   margin-bottom: 1.5rem;
-  max-width: 12ch;
+  max-width: 14ch;
 }
 .hero-title .accent { color: var(--accent); }
 
@@ -612,6 +613,7 @@ ul { list-style: none; }
    ============================================================ */
 .section {
   padding-block: var(--section-y);
+  scroll-margin-top: 5rem;
 }
 .section-alt { background: var(--surface); }
 
@@ -735,6 +737,9 @@ hr.divider {
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 1.25rem;
 }
+@media (max-width: 600px) {
+  .servicios-grid { grid-template-columns: 1fr; }
+}
 
 .servicio-card {
   background: var(--surface);
@@ -841,7 +846,7 @@ hr.divider {
   transition: color .2s;
 }
 .faq-item details summary::-webkit-details-marker { display: none; }
-.faq-item details summary:hover { color: var(--accent); }
+.faq-item details summary:hover { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
 
 .faq-chevron {
   width: 20px; height: 20px;
@@ -857,7 +862,7 @@ hr.divider {
   padding-right: 2rem;
 }
 .faq-answer p {
-  font-size: .9rem;
+  font-size: .95rem;
   color: var(--text-muted);
   line-height: 1.75;
 }
@@ -1019,9 +1024,9 @@ hr.divider {
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
-  outline: none;
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-dim);
 }
 .form-group select {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238a8276' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
@@ -1047,14 +1052,14 @@ hr.divider {
   font-size: .9rem;
   margin-top: .75rem;
 }
-.form-success { background: rgba(34,197,94,.1); border: 1px solid rgba(34,197,94,.3); color: #86efac; }
+.form-success { background: rgba(34,197,94,.1); border: 1px solid rgba(34,197,94,.3); color: #bbf7d0; }
 .form-error   { background: rgba(239,68,68,.1);  border: 1px solid rgba(239,68,68,.3);  color: #fca5a5; }
 
 /* ============================================================
    FOOTER
    ============================================================ */
 .site-footer {
-  background: #0a0a0a;
+  background: var(--surface);
   border-top: 1px solid var(--border);
   padding-block: 3rem 2rem;
 }
@@ -1632,8 +1637,8 @@ hr.divider {
         <form class="contacto-form reveal" name="contacto" method="POST" action="https://formspree.io/f/[FORMSPREE_ID]" novalidate aria-label="Formulario de contacto">
           <div class="form-row">
             <div class="form-group">
-              <label for="nombre">Nombre</label>
-              <input type="text" id="nombre" name="nombre" placeholder="Tu nombre" required autocomplete="name">
+              <label for="nombre">Nombre <span aria-hidden="true" style="color:var(--accent)">*</span></label>
+              <input type="text" id="nombre" name="nombre" placeholder="Tu nombre" required aria-required="true" autocomplete="name">
             </div>
             <div class="form-group">
               <label for="telefono">Teléfono</label>
@@ -1657,13 +1662,14 @@ hr.divider {
             </select>
           </div>
           <div class="form-group">
-            <label for="mensaje">Cuéntenos su proyecto</label>
-            <textarea id="mensaje" name="mensaje" rows="4" placeholder="Describa brevemente el trabajo que necesita, la ubicación y cualquier detalle útil..." required></textarea>
+            <label for="mensaje">Cuéntenos su proyecto <span aria-hidden="true" style="color:var(--accent)">*</span></label>
+            <textarea id="mensaje" name="mensaje" rows="4" placeholder="Describa brevemente el trabajo que necesita, la ubicación y cualquier detalle útil..." required aria-required="true"></textarea>
           </div>
           <div class="form-submit">
-            <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center">Enviar consulta</button>
+            <button type="submit" id="form-submit-btn" class="btn btn-primary" style="width:100%;justify-content:center">Enviar consulta</button>
           </div>
-          <p style="font-size:.75rem;color:var(--text-muted);margin-top:.5rem;text-align:center">Respondemos en menos de 24 horas en días laborables</p>
+          <p style="font-size:.75rem;color:var(--text-muted);margin-top:.5rem;text-align:center">Respondemos en menos de 24 horas en días laborables · <span aria-hidden="true" style="color:var(--accent)">*</span> Campos obligatorios</p>
+          <div id="form-feedback" role="status" aria-live="polite" aria-atomic="true" style="margin-top:.5rem"></div>
         </form>
 
       </div>
@@ -1711,18 +1717,29 @@ hr.divider {
       header.classList.toggle('scrolled', window.scrollY > 60);
     }, { passive: true });
 
+    function closeMenu() {
+      menu.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+      toggle.focus();
+    }
+
     toggle.addEventListener('click', function() {
       var open = menu.classList.toggle('open');
       toggle.setAttribute('aria-expanded', open);
       document.body.style.overflow = open ? 'hidden' : '';
+      if (open) {
+        var firstLink = menu.querySelector('a');
+        if (firstLink) firstLink.focus();
+      }
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && menu.classList.contains('open')) closeMenu();
     });
 
     menu.querySelectorAll('a').forEach(function(link) {
-      link.addEventListener('click', function() {
-        menu.classList.remove('open');
-        toggle.setAttribute('aria-expanded', 'false');
-        document.body.style.overflow = '';
-      });
+      link.addEventListener('click', closeMenu);
     });
   }
 
@@ -1813,13 +1830,16 @@ hr.divider {
   function initForm() {
     var form = document.querySelector('.contacto-form');
     if (!form) return;
+    var feedback = document.getElementById('form-feedback');
 
     form.addEventListener('submit', function(e) {
       e.preventDefault();
-      var btn = form.querySelector('[type="submit"]');
+      var btn = document.getElementById('form-submit-btn');
       var originalText = btn.textContent;
       btn.disabled = true;
+      btn.setAttribute('aria-busy', 'true');
       btn.textContent = 'Enviando...';
+      if (feedback) { feedback.textContent = ''; feedback.className = ''; }
 
       fetch(form.action, {
         method: 'POST',
@@ -1827,20 +1847,21 @@ hr.divider {
         headers: { 'Accept': 'application/json' }
       }).then(function(res) {
         if (res.ok) {
-          form.innerHTML = '<div class="form-success" role="alert"><strong>¡Mensaje recibido!</strong> Le contactaremos en menos de 24 horas.</div>';
+          form.querySelectorAll('input,select,textarea,button').forEach(function(el) { el.disabled = true; });
+          if (feedback) {
+            feedback.className = 'form-success';
+            feedback.innerHTML = '<strong>¡Mensaje recibido!</strong> Le contactaremos en menos de 24 horas.';
+          }
         } else {
           throw new Error('server');
         }
       }).catch(function() {
         btn.disabled = false;
+        btn.removeAttribute('aria-busy');
         btn.textContent = originalText;
-        var existing = form.querySelector('.form-error');
-        if (!existing) {
-          var err = document.createElement('p');
-          err.className = 'form-error';
-          err.setAttribute('role', 'alert');
-          err.textContent = 'Error al enviar. Llámenos directamente al 661 907 476.';
-          form.appendChild(err);
+        if (feedback) {
+          feedback.className = 'form-error';
+          feedback.textContent = 'Error al enviar. Llámenos directamente al 661 907 476.';
         }
       });
     });
