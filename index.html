@@ -252,6 +252,7 @@ html {
   scroll-behavior: smooth;
   scrollbar-width: thin;
   scrollbar-color: var(--accent) var(--surface);
+  overflow-x: hidden;
 }
 html::-webkit-scrollbar { width: 6px; }
 html::-webkit-scrollbar-track { background: var(--surface); }
@@ -263,7 +264,6 @@ body {
   font-family: var(--font-body);
   font-size: 1rem;
   line-height: 1.65;
-  overflow-x: hidden;
 }
 
 img { max-width: 100%; height: auto; display: block; }
@@ -473,12 +473,21 @@ ul { list-style: none; }
   min-height: 100svh;
   display: flex;
   align-items: center;
-  position: relative;
+  position: sticky;
+  top: 0;
+  z-index: 0;
   overflow: hidden;
   isolation: isolate;
   background-image: url('imagen_referencia_google.jpg');
   background-size: cover;
   background-position: center;
+}
+
+/* Sections scroll over the sticky hero */
+.page-body {
+  position: relative;
+  z-index: 1;
+  background: var(--bg);
 }
 
 /* Dark gradient overlay */
@@ -1028,6 +1037,8 @@ hr.divider {
   background: var(--surface);
   border-top: 1px solid var(--border);
   padding-block: 3rem 2rem;
+  position: relative;
+  z-index: 1;
 }
 .footer-inner {
   display: flex;
@@ -1142,6 +1153,8 @@ hr.divider {
     </div>
 
   </section>
+
+  <div class="page-body">
 
   <hr class="divider">
 
@@ -1613,6 +1626,8 @@ hr.divider {
       </div>
     </div>
   </section>
+
+  </div><!-- /.page-body -->
 
 </main>
 
