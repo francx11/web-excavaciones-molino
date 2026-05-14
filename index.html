@@ -470,11 +470,10 @@ ul { list-style: none; }
    HERO
    ============================================================ */
 .hero {
-  min-height: 100svh;
+  position: fixed;
+  inset: 0;
   display: flex;
   align-items: center;
-  position: sticky;
-  top: 0;
   z-index: 0;
   overflow: hidden;
   isolation: isolate;
@@ -483,7 +482,12 @@ ul { list-style: none; }
   background-position: center;
 }
 
-/* Sections scroll over the sticky hero */
+/* Pushes page-body below the fixed hero */
+.hero-spacer {
+  height: 100svh;
+}
+
+/* Sections scroll over the fixed hero */
 .page-body {
   position: relative;
   z-index: 1;
@@ -1153,6 +1157,8 @@ hr.divider {
     </div>
 
   </section>
+
+  <div class="hero-spacer" aria-hidden="true"></div>
 
   <div class="page-body">
 
